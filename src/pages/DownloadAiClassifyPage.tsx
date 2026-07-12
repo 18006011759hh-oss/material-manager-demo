@@ -9,6 +9,8 @@ import {
   RefreshCw,
   ShieldCheck,
 } from 'lucide-react';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Badge } from '../components/common/Badge';
 import { Button } from '../components/common/Button';
 import { Card } from '../components/common/Card';
@@ -247,8 +249,8 @@ function BlueTip() {
     <div className="mt-2 flex items-center gap-3 rounded-md border border-blue-100 bg-blue-50 px-4 py-3">
       <CircleHelp className="h-5 w-5 text-gray-700" />
       <div>
-        <p className="text-sm font-semibold text-ink">下载完成后将自动进行 AI 分类分析</p>
-        <p className="mt-1 text-xs text-gray-700">您可以先查看分类建议，确认后再整理到本地文件夹</p>
+        <p className="text-sm font-semibold text-ink">下载完成后生成 AI 分类建议</p>
+        <p className="mt-1 text-xs text-gray-700">剪辑师确认整理后，文件才会移动到对应本地文件夹。</p>
       </div>
     </div>
   );
@@ -279,7 +281,7 @@ function LocalPreview() {
 
         <div className="border-r border-line p-4">
           <p className="mb-4 text-xs font-medium text-gray-700">将更新的文件（6 个）</p>
-          <p className="mb-4 text-xs text-gray-600">下载完成后，系统将自动将文件移动到对应目录</p>
+          <p className="mb-4 text-xs text-gray-600">确认整理后，文件才会移动到对应目录</p>
           <div className="flex gap-2">
             {previewFiles.map((file) => (
               <div key={file.id} className="grid h-12 w-16 place-items-center rounded border border-line bg-gray-100">
@@ -305,7 +307,7 @@ function LocalPreview() {
           <div className="rounded-lg border border-dashed border-gray-400 p-5">
             <h4 className="text-sm font-semibold text-ink">执行说明</h4>
             <p className="mt-3 text-sm leading-6 text-gray-700">
-              确认整理后，系统将按照 AI 分类建议，自动将已下载的素材移动到对应的本地文件夹中。
+              下载完成后生成 AI 分类建议，剪辑师确认整理后，文件才会移动到对应本地文件夹。
             </p>
           </div>
         </div>
@@ -315,11 +317,19 @@ function LocalPreview() {
 }
 
 export function DownloadAiClassifyPage() {
+  const navigate = useNavigate();
+  const [organized, setOrganized] = useState(false);
+
+  const handleOrganize = () => {
+    if (!window.confirm('确认按 AI 分类建议整理素材并移动到对应本地文件夹吗？')) return;
+    setOrganized(true);
+  };
+
   return (
     <section>
       <PageHeader
         title="下载与 AI 分类"
-        description="下载新素材并通过 AI 分析内容，建议分类路径，确认后自动整理到本地"
+        description="下载完成后生成AI分类建议，剪辑师确认整理后，文件才会移动到对应本地文件夹。"
       />
 
       <Stepper />
@@ -338,14 +348,20 @@ export function DownloadAiClassifyPage() {
         <Button className="min-w-[172px]" size="lg">
           暂不整理，稍后处理
         </Button>
-        <Button className="min-w-[278px]" size="lg" variant="primary" icon={<RefreshCw className="h-5 w-5" />}>
-          确认整理（移动到本地文件夹）
+        <Button onClick={handleOrganize} className="min-w-[278px]" size="lg" variant="primary" icon={<RefreshCw className="h-5 w-5" />}>
+          {organized ? '已完成整理' : '确认整理（移动到本地文件夹）'}
         </Button>
       </div>
       <div className="mt-3 flex items-center justify-end gap-2 text-sm text-gray-700">
         <ShieldCheck className="h-4 w-4" />
         <span>移动操作安全可靠，您可以在“本地素材库”中查看整理结果</span>
       </div>
+      {organized ? (
+        <div role="status" className="fixed bottom-6 right-6 z-50 flex items-center gap-4 rounded-lg bg-ink px-5 py-4 text-sm text-white shadow-xl">
+          <span>整理成功，素材已按分类建议处理</span>
+          <button type="button" onClick={() => navigate('/local-library')} className="font-medium text-blue-200 hover:text-white">前往本地素材库 →</button>
+        </div>
+      ) : null}
     </section>
   );
 }

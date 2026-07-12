@@ -1,12 +1,30 @@
-import { Bell, CheckCircle2, ChevronDown, CircleHelp, RefreshCw, UserRound } from 'lucide-react';
+import { useState } from 'react';
+import { Bell, CheckCircle2, ChevronDown, CircleHelp, LoaderCircle, RefreshCw, UserRound } from 'lucide-react';
 import { Button } from '../common/Button';
 import { IconButton } from '../common/IconButton';
+import { DemoControls } from './DemoControls';
 
 export function Topbar() {
+  const [syncing, setSyncing] = useState(false);
+  const [message, setMessage] = useState('');
+
+  const handleSync = () => {
+    setSyncing(true);
+    setMessage('');
+    window.setTimeout(() => {
+      setSyncing(false);
+      setMessage('同步成功，已获取最新素材状态');
+      window.setTimeout(() => setMessage(''), 3000);
+    }, 900);
+  };
+
   return (
-    <header className="flex h-[78px] items-center justify-end border-b border-line bg-white px-8">
+    <header className="relative flex h-[78px] items-center justify-between border-b border-line bg-white px-8">
+      <DemoControls />
       <div className="flex items-center gap-6">
-        <Button icon={<RefreshCw className="h-4 w-4" />}>同步更新</Button>
+        <Button onClick={handleSync} disabled={syncing} icon={syncing ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}>
+          {syncing ? '同步中...' : '同步更新'}
+        </Button>
         <div className="flex items-center gap-2 text-sm text-gray-700">
           <CheckCircle2 className="h-4 w-4 text-gray-500" />
           <span>已是最新状态</span>
@@ -23,6 +41,7 @@ export function Topbar() {
           <ChevronDown className="h-4 w-4 text-ink" />
         </button>
       </div>
+      {message ? <div role="status" className="absolute right-8 top-[66px] z-50 rounded-md bg-ink px-4 py-2.5 text-sm text-white shadow-lg">{message}</div> : null}
     </header>
   );
 }

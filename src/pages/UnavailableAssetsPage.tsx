@@ -14,6 +14,7 @@ import {
   TableCellsSplit,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
+import { useState } from 'react';
 import { Badge } from '../components/common/Badge';
 import { Button } from '../components/common/Button';
 import { Card } from '../components/common/Card';
@@ -91,10 +92,10 @@ function SuggestionCell({ suggestion }: { suggestion: string }) {
   );
 }
 
-function AssetActions() {
+function AssetActions({ assetId, handled, onMove }: { assetId: string; handled: boolean; onMove: (assetId: string) => void }) {
   return (
     <div className="flex items-center gap-2">
-      <Button size="sm">移动</Button>
+      <Button size="sm" disabled={handled} onClick={() => onMove(assetId)}>{handled ? '已处理' : '移动'}</Button>
       <Button size="sm">暂不处理</Button>
       <Button size="sm">移至回收站</Button>
       <IconButton icon={<MoreHorizontal className="h-4 w-4" />} label="更多操作" className="h-8 w-8" />
@@ -103,6 +104,16 @@ function AssetActions() {
 }
 
 export function UnavailableAssetsPage() {
+  const [handledIds, setHandledIds] = useState<string[]>([]);
+  const [message, setMessage] = useState('');
+
+  const handleMove = (assetId: string) => {
+    if (!window.confirm('确认将该素材移动到建议的“不可用素材”文件夹吗？')) return;
+    setHandledIds((ids) => [...ids, assetId]);
+    setMessage('处理成功，素材已移动到“不可用素材”文件夹');
+    window.setTimeout(() => setMessage(''), 3000);
+  };
+
   return (
     <section>
       <PageHeader
@@ -194,7 +205,7 @@ export function UnavailableAssetsPage() {
                   <SuggestionCell suggestion={asset.suggestion} />
                 </td>
                 <td className="px-5 py-4">
-                  <AssetActions />
+                  <AssetActions assetId={asset.id} handled={handledIds.includes(asset.id)} onMove={handleMove} />
                 </td>
               </tr>
             ))}
@@ -242,6 +253,7 @@ export function UnavailableAssetsPage() {
         </div>
         <Button icon={<Folder className="h-4 w-4" />}>打开不可用素材文件夹</Button>
       </Card>
+      {message ? <div role="status" className="fixed bottom-6 right-6 z-50 rounded-lg bg-ink px-5 py-4 text-sm text-white shadow-xl">{message}</div> : null}
     </section>
   );
 }

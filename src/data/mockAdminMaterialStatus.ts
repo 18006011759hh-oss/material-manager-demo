@@ -31,7 +31,7 @@ export const adminMaterialAssets: AdminMaterialAsset[] = [
     statusLabel: '可用',
     important: true,
     tags: ['口红', '上嘴试色', '夏日'],
-    createdAt: '2024-06-15\n10:30',
+    createdAt: '刚刚',
   },
   {
     id: 'A002',
@@ -42,7 +42,7 @@ export const adminMaterialAssets: AdminMaterialAsset[] = [
     statusLabel: '可用',
     important: false,
     tags: ['粉底', '遮瑕', '测评'],
-    createdAt: '2024-06-15\n09:45',
+    createdAt: '今天\n09:45',
   },
   {
     id: 'A003',
@@ -53,7 +53,7 @@ export const adminMaterialAssets: AdminMaterialAsset[] = [
     statusLabel: '下架',
     important: false,
     tags: ['新品', '功能', '科技'],
-    createdAt: '2024-06-14\n16:20',
+    createdAt: '昨天\n16:20',
   },
   {
     id: 'A004',
@@ -64,7 +64,7 @@ export const adminMaterialAssets: AdminMaterialAsset[] = [
     statusLabel: '过期',
     important: false,
     tags: ['海报', '促销', '夏日'],
-    createdAt: '2024-05-20\n11:10',
+    createdAt: '3 周前',
   },
   {
     id: 'A005',
@@ -75,7 +75,7 @@ export const adminMaterialAssets: AdminMaterialAsset[] = [
     statusLabel: '可用',
     important: true,
     tags: ['节日', '氛围', '烟花'],
-    createdAt: '2024-06-13\n14:05',
+    createdAt: '3 天前',
   },
   {
     id: 'A006',
@@ -86,7 +86,7 @@ export const adminMaterialAssets: AdminMaterialAsset[] = [
     statusLabel: '不推荐',
     important: false,
     tags: ['转场', '特效', '光效'],
-    createdAt: '2024-06-12\n10:00',
+    createdAt: '4 天前',
   },
   {
     id: 'A007',
@@ -97,7 +97,7 @@ export const adminMaterialAssets: AdminMaterialAsset[] = [
     statusLabel: '可用',
     important: false,
     tags: ['包装', '产品', '展示'],
-    createdAt: '2024-06-11\n15:30',
+    createdAt: '5 天前',
   },
   {
     id: 'A008',
@@ -108,7 +108,7 @@ export const adminMaterialAssets: AdminMaterialAsset[] = [
     statusLabel: '下架',
     important: false,
     tags: ['包装', '对比', '旧版'],
-    createdAt: '2024-06-10\n09:20',
+    createdAt: '6 天前',
   },
 ];
 

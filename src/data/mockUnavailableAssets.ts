@@ -30,7 +30,7 @@ export const unavailableAssets: UnavailableAsset[] = [
     statusLabel: '已过期',
     originalPath: 'D:\\短视频素材库\\促销活动\\7月活动\\M088_7月促销口播.mp4',
     reason: '7月促销活动已结束',
-    note: '过期时间：2024-07-31',
+    note: '已于昨天过期',
     suggestion: '移动到 不可用素材\\已过期',
   },
   {
@@ -41,7 +41,7 @@ export const unavailableAssets: UnavailableAsset[] = [
     statusLabel: '已下架',
     originalPath: 'D:\\短视频素材库\\美妆测评\\粉底类\\M056_旧款粉底测评.mp4',
     reason: '商品已下架',
-    note: '下架时间：2024-06-10',
+    note: '昨天已下架',
     suggestion: '移动到 不可用素材\\已下架',
   },
   {
@@ -63,7 +63,7 @@ export const unavailableAssets: UnavailableAsset[] = [
     statusLabel: '已下架',
     originalPath: 'D:\\短视频素材库\\产品展示\\旧包装\\M039_旧包装.mp4',
     reason: '旧包装已停用',
-    note: '下架时间：2024-05-20',
+    note: '3 周前下架',
     suggestion: '移动到 不可用素材\\已下架',
   },
   {
@@ -74,7 +74,7 @@ export const unavailableAssets: UnavailableAsset[] = [
     statusLabel: '已过期',
     originalPath: 'D:\\短视频素材库\\节日素材\\春节\\M072_节日祝福片头.mp4',
     reason: '春节活动已结束',
-    note: '过期时间：2024-02-20',
+    note: '4 个月前过期',
     suggestion: '移动到 不可用素材\\已过期',
   },
 ];

@@ -1,12 +1,9 @@
 import {
   AlertTriangle,
-  Clock3,
   Download,
   Folder,
   Home,
   MoreHorizontal,
-  Settings,
-  Tags,
 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '../../lib/cn';
@@ -17,9 +14,6 @@ const navItems = [
   { label: '下载与 AI 分类', icon: Download, path: '/download-ai-classify' },
   { label: '不可用素材提醒', icon: AlertTriangle, path: '/unavailable-assets' },
   { label: '本地素材库', icon: Folder, path: '/local-library' },
-  { label: '重点素材', icon: Tags, path: '/important-assets' },
-  { label: '使用记录', icon: Clock3, path: '/usage-history', badge: '后续上线' },
-  { label: '设置', icon: Settings, path: '/settings' },
 ];
 
 export function Sidebar() {
@@ -56,11 +50,6 @@ export function Sidebar() {
             <>
               <Icon className="h-5 w-5 shrink-0" />
               <span className="flex-1 whitespace-nowrap">{item.label}</span>
-              {item.badge ? (
-                <span className="rounded-md bg-gray-200 px-2 py-1 text-xs text-gray-600">
-                  {item.badge}
-                </span>
-              ) : null}
             </>
           );
 

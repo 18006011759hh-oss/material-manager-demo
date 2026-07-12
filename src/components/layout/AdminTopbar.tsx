@@ -1,9 +1,11 @@
 import { Bell, ChevronDown, CircleHelp, UserRound } from 'lucide-react';
 import { IconButton } from '../common/IconButton';
+import { DemoControls } from './DemoControls';
 
 export function AdminTopbar() {
   return (
-    <header className="flex h-[78px] items-center justify-end border-b border-line bg-white px-8">
+    <header className="flex h-[78px] items-center justify-between border-b border-line bg-white px-8">
+      <DemoControls />
       <div className="flex items-center gap-6">
         <IconButton icon={<Bell className="h-5 w-5" />} label="通知" badge={3} />
         <span className="-ml-5 text-sm text-ink">通知</span>

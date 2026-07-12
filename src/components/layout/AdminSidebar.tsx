@@ -1,11 +1,6 @@
 import {
-  BarChart3,
-  CalendarClock,
   Download,
-  FileText,
   PenLine,
-  Settings,
-  Users,
 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '../../lib/cn';
@@ -13,10 +8,6 @@ import { cn } from '../../lib/cn';
 const adminNavItems = [
   { label: '素材状态管理', icon: PenLine, path: '/admin/material-status' },
   { label: '发布更新', icon: Download, path: '/admin/publish-confirm' },
-  { label: '使用数据', icon: BarChart3, path: '/admin/usage-data' },
-  { label: '剪辑师管理', icon: Users, path: '/admin/editor-management' },
-  { label: '系统设置', icon: Settings, path: '/admin/settings' },
-  { label: '操作日志', icon: FileText, path: '/admin/logs' },
 ];
 
 export function AdminSidebar() {

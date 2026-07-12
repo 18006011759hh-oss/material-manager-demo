@@ -55,7 +55,7 @@ export const recentUpdates = [
   {
     type: '新增素材',
     content: '新增 12 个素材文件',
-    updatedAt: '2024-06-15 09:30',
+    updatedAt: '刚刚',
     source: '管理员发布',
     action: '去下载',
     icon: Folder,
@@ -63,7 +63,7 @@ export const recentUpdates = [
   {
     type: '重点素材',
     content: '新增 2 个重点素材',
-    updatedAt: '2024-06-15 09:30',
+    updatedAt: '10 分钟前',
     source: '管理员标记',
     action: '去查看',
     icon: Star,
@@ -71,7 +71,7 @@ export const recentUpdates = [
   {
     type: '不可用素材',
     content: '新增 3 个不可用素材',
-    updatedAt: '2024-06-15 09:30',
+    updatedAt: '今天 09:30',
     source: '状态更新',
     action: '去处理',
     icon: AlertTriangle,
@@ -79,7 +79,7 @@ export const recentUpdates = [
   {
     type: '待分类素材',
     content: '新增 6 个待分类素材',
-    updatedAt: '2024-06-15 09:30',
+    updatedAt: '昨天 18:20',
     source: '下载完成',
     action: '去分类',
     icon: Folder,

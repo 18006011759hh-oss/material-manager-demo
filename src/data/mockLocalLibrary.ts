@@ -63,7 +63,7 @@ export const libraryAssets: LibraryAsset[] = [
     localPath: 'D:\\短视频素材库\\01_口播素材\\上嘴试色\\',
     resolution: '1920 × 1080',
     frameRate: '25fps',
-    createdAt: '2024-06-15 09:30',
+    createdAt: '今天 09:30',
   },
   {
     id: 'L002',
@@ -78,7 +78,7 @@ export const libraryAssets: LibraryAsset[] = [
     localPath: 'D:\\短视频素材库\\01_口播素材\\测评\\',
     resolution: '1920 × 1080',
     frameRate: '25fps',
-    createdAt: '2024-06-14 16:20',
+    createdAt: '昨天 16:20',
   },
   {
     id: 'L003',
@@ -93,7 +93,7 @@ export const libraryAssets: LibraryAsset[] = [
     localPath: 'D:\\短视频素材库\\02_产品素材\\功能演示\\',
     resolution: '1920 × 1080',
     frameRate: '25fps',
-    createdAt: '2024-06-14 13:05',
+    createdAt: '昨天 13:05',
   },
   {
     id: 'L004',
@@ -108,7 +108,7 @@ export const libraryAssets: LibraryAsset[] = [
     localPath: 'D:\\短视频素材库\\03_活动素材\\促销活动\\',
     resolution: '1920 × 1080',
     frameRate: '25fps',
-    createdAt: '2024-06-13 18:45',
+    createdAt: '3 天前',
   },
   {
     id: 'L005',
@@ -123,7 +123,7 @@ export const libraryAssets: LibraryAsset[] = [
     localPath: 'D:\\短视频素材库\\03_活动素材\\节日氛围\\',
     resolution: '1920 × 1080',
     frameRate: '25fps',
-    createdAt: '2024-06-12 11:10',
+    createdAt: '4 天前',
   },
   {
     id: 'L006',
@@ -138,7 +138,7 @@ export const libraryAssets: LibraryAsset[] = [
     localPath: 'D:\\短视频素材库\\04_影视素材\\背景环境\\',
     resolution: '1920 × 1080',
     frameRate: '25fps',
-    createdAt: '2024-06-12 09:00',
+    createdAt: '4 天前',
   },
   {
     id: 'L007',
@@ -153,7 +153,7 @@ export const libraryAssets: LibraryAsset[] = [
     localPath: 'D:\\短视频素材库\\04_影视素材\\转场特效\\',
     resolution: '1920 × 1080',
     frameRate: '25fps',
-    createdAt: '2024-06-11 15:12',
+    createdAt: '5 天前',
   },
   {
     id: 'L008',
@@ -168,7 +168,7 @@ export const libraryAssets: LibraryAsset[] = [
     localPath: 'D:\\短视频素材库\\02_产品素材\\产品展示\\',
     resolution: '1920 × 1080',
     frameRate: '25fps',
-    createdAt: '2024-06-10 10:40',
+    createdAt: '6 天前',
   },
 ];
 

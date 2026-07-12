@@ -21,7 +21,7 @@ export const addedAssets: PublishAssetRow[] = [
     size: '128.6 MB',
     tags: ['口播', '促销', '夏日'],
     source: '本地上传',
-    time: '2024-06-15 10:30',
+    time: '刚刚',
   },
   {
     id: 'P002',
@@ -30,7 +30,7 @@ export const addedAssets: PublishAssetRow[] = [
     size: '96.3 MB',
     tags: ['产品', '功能', '演示'],
     source: '本地上传',
-    time: '2024-06-15 09:45',
+    time: '今天 09:45',
   },
   {
     id: 'P003',
@@ -39,7 +39,7 @@ export const addedAssets: PublishAssetRow[] = [
     size: '74.5 MB',
     tags: ['节日', '氛围', '烟花'],
     source: '本地上传',
-    time: '2024-06-15 09:20',
+    time: '今天 09:20',
   },
 ];
 
@@ -83,7 +83,7 @@ export const unavailableAssetsForPublish: PublishAssetRow[] = [
     type: '视频',
     status: 'expired',
     statusLabel: '过期',
-    reason: '活动已结束（过期时间：2024-05-31）',
+    reason: '活动已结束（3 周前过期）',
     suggestion: '建议替换为最新活动素材',
   },
   {
