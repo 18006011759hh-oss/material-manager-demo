@@ -21,6 +21,7 @@ import { SelectFilter } from '../components/common/SelectFilter';
 import { Tag } from '../components/common/Tag';
 import { PageHeader } from '../components/layout/PageHeader';
 import { cn } from '../lib/cn';
+import { useDemoState } from '../context/DemoStateContext';
 import {
   adminMaterialAssets,
   adminStatusTabs,
@@ -114,7 +115,7 @@ function AssetType({ type }: { type: AdminMaterialAsset['type'] }) {
   );
 }
 
-function AssetRow({ asset }: { asset: AdminMaterialAsset }) {
+function AssetRow({ asset, onMarkExpired, isDemoAsset = false }: { asset: AdminMaterialAsset; onMarkExpired?: () => void; isDemoAsset?: boolean }) {
   return (
     <tr className="border-b border-line last:border-b-0">
       <td className="px-4 py-3">
@@ -154,29 +155,44 @@ function AssetRow({ asset }: { asset: AdminMaterialAsset }) {
       </td>
       <td className="whitespace-pre-line px-4 py-3 text-sm leading-6 text-ink">{asset.createdAt}</td>
       <td className="px-4 py-3">
-        <IconButton icon={<MoreHorizontal className="h-4 w-4" />} label="更多操作" className="h-8 w-8 border border-line" />
+        {isDemoAsset && onMarkExpired ? (
+          <Button className="whitespace-nowrap" size="sm" onClick={onMarkExpired} disabled={asset.status === 'expired'}>{asset.status === 'expired' ? '已标记' : '标记过期'}</Button>
+        ) : <IconButton icon={<MoreHorizontal className="h-4 w-4" />} label="更多操作" className="h-8 w-8 border border-line" />}
       </td>
     </tr>
   );
 }
 
 function MaterialsTable() {
+  const { state, markM088Expired } = useDemoState();
+  const demoAsset: AdminMaterialAsset = {
+    id: 'M088',
+    name: 'M088_7月促销口播.mp4',
+    meta: 'MP4 · 1920×1080 · 128.6MB',
+    type: '视频',
+    status: state.m088MarkedExpired ? 'expired' : 'available',
+    statusLabel: state.m088MarkedExpired ? '已过期' : '可用',
+    important: false,
+    tags: ['促销', '口播', '活动'],
+    createdAt: '今天\n09:30',
+  };
   return (
     <Card className="overflow-hidden" padded={false}>
       <table className="w-full table-fixed border-collapse text-left text-sm">
         <thead className="bg-white text-gray-700">
           <tr className="border-b border-line">
             <th className="w-[4%] px-4 py-3 font-medium" />
-            <th className="w-[30%] px-4 py-3 font-medium">素材信息</th>
+            <th className="w-[28%] px-4 py-3 font-medium">素材信息</th>
             <th className="w-[9%] px-4 py-3 font-medium">类型</th>
             <th className="w-[10%] px-4 py-3 font-medium">状态</th>
             <th className="w-[11%] px-4 py-3 font-medium">重点标记</th>
-            <th className="w-[20%] px-4 py-3 font-medium">标签</th>
-            <th className="w-[11%] px-4 py-3 font-medium">创建时间</th>
-            <th className="w-[5%] px-4 py-3 font-medium">操作</th>
+            <th className="w-[17%] px-4 py-3 font-medium">标签</th>
+            <th className="w-[10%] px-4 py-3 font-medium">创建时间</th>
+            <th className="w-[11%] px-4 py-3 font-medium">操作</th>
           </tr>
         </thead>
         <tbody>
+          <AssetRow asset={demoAsset} isDemoAsset onMarkExpired={markM088Expired} />
           {adminMaterialAssets.map((asset) => (
             <AssetRow key={asset.id} asset={asset} />
           ))}
@@ -318,6 +334,7 @@ function PendingChanges() {
 
 export function AdminMaterialStatusPage() {
   const navigate = useNavigate();
+  const { state } = useDemoState();
 
   return (
     <section>
@@ -329,8 +346,9 @@ export function AdminMaterialStatusPage() {
             className="h-11 min-w-[208px]"
             variant="primary"
             onClick={() => navigate('/admin/publish-confirm')}
+            disabled={!state.m088MarkedExpired || state.published}
           >
-            发布更新（8 项变更）
+            {state.published ? '更新已发布' : state.m088MarkedExpired ? '发布更新（1 项变更）' : '请先标记 M088'}
           </Button>
         }
       />

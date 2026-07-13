@@ -21,9 +21,9 @@ import { Card } from '../components/common/Card';
 import { IconButton } from '../components/common/IconButton';
 import { Tabs } from '../components/common/Tabs';
 import { PageHeader } from '../components/layout/PageHeader';
+import { useDemoState } from '../context/DemoStateContext';
 import {
   unavailableAssets,
-  unavailableTabs,
   type UnavailableAsset,
   type UnavailableStatus,
 } from '../data/mockUnavailableAssets';
@@ -94,22 +94,28 @@ function SuggestionCell({ suggestion }: { suggestion: string }) {
 
 function AssetActions({ assetId, handled, onMove }: { assetId: string; handled: boolean; onMove: (assetId: string) => void }) {
   return (
-    <div className="flex items-center gap-2">
-      <Button size="sm" disabled={handled} onClick={() => onMove(assetId)}>{handled ? '已处理' : '移动'}</Button>
-      <Button size="sm">暂不处理</Button>
-      <Button size="sm">移至回收站</Button>
+    <div className="flex items-center gap-2 whitespace-nowrap">
+      <Button className="whitespace-nowrap" size="sm" disabled={handled} onClick={() => onMove(assetId)}>{handled ? '已处理' : '移动'}</Button>
+      <Button className="whitespace-nowrap" size="sm">暂不处理</Button>
       <IconButton icon={<MoreHorizontal className="h-4 w-4" />} label="更多操作" className="h-8 w-8" />
     </div>
   );
 }
 
 export function UnavailableAssetsPage() {
-  const [handledIds, setHandledIds] = useState<string[]>([]);
   const [message, setMessage] = useState('');
+  const { state, moveM088 } = useDemoState();
+  const visibleAssets = state.synced ? unavailableAssets.filter((asset) => asset.id === 'M088').map((asset) => ({ ...asset, reason: '活动已结束' })) : [];
+  const tabs = [
+    { label: `全部（${visibleAssets.length}）`, value: 'all' },
+    { label: `已过期（${visibleAssets.length}）`, value: 'expired' },
+    { label: '已下架（0）', value: 'offline' },
+    { label: '不推荐使用（0）', value: 'notRecommended' },
+  ];
 
   const handleMove = (assetId: string) => {
     if (!window.confirm('确认将该素材移动到建议的“不可用素材”文件夹吗？')) return;
-    setHandledIds((ids) => [...ids, assetId]);
+    if (assetId === 'M088') moveM088();
     setMessage('处理成功，素材已移动到“不可用素材”文件夹');
     window.setTimeout(() => setMessage(''), 3000);
   };
@@ -124,23 +130,24 @@ export function UnavailableAssetsPage() {
       <div className="grid grid-cols-[minmax(0,1fr)_398px] gap-11">
         <div className="grid grid-cols-3 gap-7">
           {summaryStats.map((stat) => (
-            <SummaryStatCard key={stat.label} {...stat} />
+            <SummaryStatCard key={stat.label} {...stat} value={stat.label === '已过期' ? String(visibleAssets.length) : '0'} />
           ))}
         </div>
 
-        <Card className="h-[156px]">
+        <Card className="min-h-[178px]">
           <h3 className="text-sm font-semibold text-ink">说明</h3>
           <ul className="mt-4 space-y-2 text-sm leading-5 text-ink">
             <li>· 这些素材在云端已被标记为不可用</li>
             <li>· 建议移动到“不可用素材”文件夹统一管理</li>
-            <li>· 不会删除原文件，可随时恢复</li>
+            <li>· AI 仅提供建议，必须人工确认后移动</li>
+            <li>· 禁止自动删除，不会删除原文件</li>
             <li>· 如不确定可先“暂不处理”</li>
           </ul>
         </Card>
       </div>
 
       <div className="mt-5">
-        <Tabs tabs={unavailableTabs} active="all" variant="underline" />
+        <Tabs tabs={tabs} active="all" variant="underline" />
       </div>
 
       <div className="flex h-[66px] items-center justify-between gap-4 border-b border-line">
@@ -175,16 +182,16 @@ export function UnavailableAssetsPage() {
         <table className="w-full table-fixed border-collapse text-left text-sm">
           <thead className="bg-white text-gray-700">
             <tr className="border-b border-line">
-              <th className="w-[25%] px-5 py-4 font-medium">素材信息</th>
+              <th className="w-[24%] px-5 py-4 font-medium">素材信息</th>
               <th className="w-[8%] px-5 py-4 font-medium">状态</th>
-              <th className="w-[18%] px-5 py-4 font-medium">原路径（当前位置）</th>
-              <th className="w-[15%] px-5 py-4 font-medium">原因 / 备注</th>
-              <th className="w-[15%] px-5 py-4 font-medium">建议处理方式</th>
-              <th className="w-[19%] px-5 py-4 font-medium">操作</th>
+              <th className="w-[17%] px-5 py-4 font-medium">原路径（当前位置）</th>
+              <th className="w-[14%] px-5 py-4 font-medium">原因 / 备注</th>
+              <th className="w-[17%] px-5 py-4 font-medium">建议处理方式</th>
+              <th className="w-[20%] px-5 py-4 font-medium">操作</th>
             </tr>
           </thead>
           <tbody>
-            {unavailableAssets.map((asset) => (
+            {visibleAssets.map((asset) => (
               <tr key={asset.id} className="border-b border-line last:border-b-0">
                 <td className="px-5 py-4">
                   <AssetInfo asset={asset} />
@@ -205,7 +212,7 @@ export function UnavailableAssetsPage() {
                   <SuggestionCell suggestion={asset.suggestion} />
                 </td>
                 <td className="px-5 py-4">
-                  <AssetActions assetId={asset.id} handled={handledIds.includes(asset.id)} onMove={handleMove} />
+                  <AssetActions assetId={asset.id} handled={state.moved} onMove={handleMove} />
                 </td>
               </tr>
             ))}
@@ -213,7 +220,7 @@ export function UnavailableAssetsPage() {
         </table>
 
         <div className="flex h-14 items-center justify-between border-t border-line px-5 text-sm text-gray-700">
-          <span>共 19 条</span>
+          <span>共 {visibleAssets.length} 条</span>
           <div className="flex items-center gap-2">
             <Button size="sm" icon={<ChevronLeft className="h-4 w-4" />}>
               上一页
@@ -247,7 +254,7 @@ export function UnavailableAssetsPage() {
           <div>
             <p className="text-sm font-semibold text-ink">温馨提示</p>
             <p className="mt-1 text-sm text-gray-700">
-              移动操作不会删除原文件，仅改变文件位置。您可以在“不可用素材”文件夹中查看和恢复。
+              AI 仅提供处理建议；人工确认后只改变文件位置，系统禁止自动删除原文件。
             </p>
           </div>
         </div>

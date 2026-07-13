@@ -17,6 +17,7 @@ import { Button } from '../components/common/Button';
 import { Card } from '../components/common/Card';
 import { Tag } from '../components/common/Tag';
 import { PageHeader } from '../components/layout/PageHeader';
+import { useDemoState } from '../context/DemoStateContext';
 import {
   addedAssets,
   importantAssets,
@@ -264,6 +265,19 @@ function PublishNote() {
 export function AdminPublishConfirmPage() {
   const navigate = useNavigate();
   const [showSuccess, setShowSuccess] = useState(false);
+  const [publishing, setPublishing] = useState(false);
+  const { state, publishUpdate } = useDemoState();
+
+  const handlePublish = () => {
+    if (!state.m088MarkedExpired || publishing) return;
+    setPublishing(true);
+    window.setTimeout(() => {
+      publishUpdate();
+      setPublishing(false);
+      setShowSuccess(true);
+      window.setTimeout(() => setShowSuccess(false), 3000);
+    }, 900);
+  };
 
   return (
     <section>
@@ -275,6 +289,14 @@ export function AdminPublishConfirmPage() {
       ) : null}
 
       <PageHeader title="发布更新确认" description="请确认本次更新内容，发布后将同步给所有剪辑师" />
+
+      <Card className="mb-4 flex items-center justify-between border-amber-200 bg-amber-50">
+        <div>
+          <p className="font-semibold text-ink">M088_7月促销口播.mp4 · 已过期</p>
+          <p className="mt-1 text-sm text-gray-700">原因：活动已结束 · 发布后等待剪辑师手动同步</p>
+        </div>
+        <Badge tone="red" className="rounded-md">待发布</Badge>
+      </Card>
 
       <div className="grid grid-cols-[minmax(0,1fr)_344px] gap-5">
         <div className="min-w-0 space-y-3">
@@ -298,8 +320,8 @@ export function AdminPublishConfirmPage() {
           <Button className="min-w-[112px]" size="lg" onClick={() => navigate('/admin/material-status')}>
             取消发布
           </Button>
-          <Button className="min-w-[200px]" size="lg" variant="primary" onClick={() => setShowSuccess(true)}>
-            确认发布更新
+          <Button className="min-w-[200px]" size="lg" variant="primary" onClick={handlePublish} disabled={!state.m088MarkedExpired || publishing || state.published}>
+            {publishing ? '发布中...' : state.published ? '已发布' : '确认发布更新'}
           </Button>
         </div>
       </div>

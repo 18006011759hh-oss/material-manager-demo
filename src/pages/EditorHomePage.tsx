@@ -13,8 +13,12 @@ import {
   stats,
   suggestions,
 } from '../data/mockDashboard';
+import { useDemoState } from '../context/DemoStateContext';
+import { AlertTriangle } from 'lucide-react';
 
 export function EditorHomePage() {
+  const { state } = useDemoState();
+  const demoStats = stats.map((stat) => stat.label === '不可用素材' ? { ...stat, value: state.synced ? '1' : '0', trend: state.synced ? '刚刚同步' : '暂无待处理' } : stat);
   return (
     <div className="grid grid-cols-[minmax(0,1fr)_318px] gap-6">
       <section className="min-w-0">
@@ -27,8 +31,16 @@ export function EditorHomePage() {
           description="同步云端更新，管理本地素材，让剪辑更高效"
         />
 
+        {state.published && !state.synced ? (
+          <div className="mb-5 flex items-center gap-3 rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+            <AlertTriangle className="h-5 w-5" />
+            <span className="font-medium">1 条素材状态更新</span>
+            <span>请点击顶部“同步更新”获取最新状态</span>
+          </div>
+        ) : null}
+
         <div className="grid grid-cols-5 gap-4">
-          {stats.map((stat) => (
+          {demoStats.map((stat) => (
             <StatCard key={stat.label} {...stat} />
           ))}
         </div>

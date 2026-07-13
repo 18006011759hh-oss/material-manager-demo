@@ -23,6 +23,7 @@ import { SelectFilter } from '../components/common/SelectFilter';
 import { Tag } from '../components/common/Tag';
 import { PageHeader } from '../components/layout/PageHeader';
 import { cn } from '../lib/cn';
+import { useDemoState } from '../context/DemoStateContext';
 import {
   categoryTree,
   filterOptions,
@@ -65,6 +66,7 @@ function CategoryTreeNode({ node, level = 0 }: { node: CategoryNode; level?: num
 }
 
 function CategoryPanel() {
+  const { state } = useDemoState();
   return (
     <Card className="overflow-hidden" padded={false}>
       <div className="flex h-12 items-center justify-between border-b border-line px-4">
@@ -75,6 +77,12 @@ function CategoryPanel() {
         {categoryTree.map((node) => (
           <CategoryTreeNode key={node.name} node={node} />
         ))}
+        {state.moved ? (
+          <div className="mt-2 space-y-1 border-t border-line pt-2 text-sm text-ink">
+            <p className="flex items-center gap-2"><ChevronDown className="h-4 w-4" /><Folder className="h-4 w-4 text-gray-600" />不可用素材</p>
+            <p className="flex items-center gap-2 pl-6"><Folder className="h-4 w-4 text-gray-600" />已过期</p>
+          </div>
+        ) : null}
       </div>
       <div className="border-t border-line px-4 py-3 text-sm text-ink">共 82 个文件夹</div>
     </Card>
@@ -126,6 +134,13 @@ function AssetRow({ asset }: { asset: LibraryAsset }) {
 }
 
 function AssetListPanel() {
+  const { state } = useDemoState();
+  const movedAsset: LibraryAsset = {
+    id: 'M088', fileName: 'M088_7月促销口播.mp4', previewTag: '已过期', type: '活动素材', category: '已过期',
+    status: 'offline', statusLabel: '已处理', duration: '00:15', size: '128.6 MB',
+    localPath: 'D:\\短视频素材库\\不可用素材\\已过期\\M088_7月促销口播.mp4', resolution: '1920 × 1080', frameRate: '25fps', createdAt: '刚刚',
+  };
+  const assets = state.moved ? [movedAsset, ...libraryAssets] : libraryAssets;
   return (
     <Card className="overflow-hidden" padded={false}>
       <div className="flex h-12 items-center justify-between border-b border-line px-4">
@@ -146,7 +161,7 @@ function AssetListPanel() {
           </tr>
         </thead>
         <tbody>
-          {libraryAssets.map((asset) => (
+          {assets.map((asset) => (
             <AssetRow key={asset.id} asset={asset} />
           ))}
         </tbody>

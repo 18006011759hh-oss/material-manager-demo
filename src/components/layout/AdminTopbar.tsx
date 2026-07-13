@@ -4,9 +4,9 @@ import { DemoControls } from './DemoControls';
 
 export function AdminTopbar() {
   return (
-    <header className="flex h-[78px] items-center justify-between border-b border-line bg-white px-8">
+    <header className="flex h-[78px] items-center justify-between gap-4 border-b border-line bg-white px-6">
       <DemoControls />
-      <div className="flex items-center gap-6">
+      <div className="flex shrink-0 items-center gap-4">
         <IconButton icon={<Bell className="h-5 w-5" />} label="通知" badge={3} />
         <span className="-ml-5 text-sm text-ink">通知</span>
         <div className="h-7 w-px bg-line" />
