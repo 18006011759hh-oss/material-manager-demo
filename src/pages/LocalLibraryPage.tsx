@@ -97,9 +97,9 @@ function AssetThumbnail() {
   );
 }
 
-function AssetRow({ asset }: { asset: LibraryAsset }) {
+function AssetRow({ asset, highlighted = false }: { asset: LibraryAsset; highlighted?: boolean }) {
   return (
-    <tr className="border-b border-line last:border-b-0">
+    <tr className={`border-b border-line last:border-b-0 ${highlighted ? 'bg-blue-50 ring-2 ring-inset ring-brand' : ''}`}>
       <td className="px-3 py-3">
         <input type="checkbox" className="h-4 w-4 rounded border-line" aria-label={`选择 ${asset.fileName}`} />
       </td>
@@ -140,11 +140,20 @@ function AssetListPanel() {
     status: 'offline', statusLabel: '已处理', duration: '00:15', size: '128.6 MB',
     localPath: 'D:\\短视频素材库\\不可用素材\\已过期\\M088_7月促销口播.mp4', resolution: '1920 × 1080', frameRate: '25fps', createdAt: '刚刚',
   };
-  const assets = state.moved ? [movedAsset, ...libraryAssets] : libraryAssets;
+  const classifiedAssets: LibraryAsset[] = libraryAssets.slice(0, 6).map((asset, index) => ({
+    ...asset,
+    id: `N00${index + 1}`,
+    fileName: ['N001_夏日促销口播.mp4', 'N002_新品功能展示.mp4', 'N003_零食测评短视频.mp4', 'N004_节日氛围视频.mp4', 'N005_产品使用教程.mp4', 'N006_搞笑片段合集.mp4'][index],
+    status: [1, 3, 5].includes(index) ? 'important' : 'available',
+    statusLabel: [1, 3, 5].includes(index) ? '重点' : '可用',
+    localPath: `D:\\短视频素材库\\AI分类\\${['促销活动', '产品展示', '零食测评', '节日氛围', '产品教程', '搞笑合集'][index]}\\`,
+  }));
+  const unavailableFinal: LibraryAsset[] = [movedAsset, ...libraryAssets.slice(1, 4).map((asset, index) => ({ ...asset, id: ['M056', 'M039', 'M061'][index], fileName: ['M056_旧款粉底测评.mp4', 'M039_旧包装产品展示.mp4', 'M061_赠品展示（活动版）.mp4'][index], status: 'offline' as const, statusLabel: '已处理', localPath: `D:\\短视频素材库\\不可用素材\\${index === 0 ? '已过期' : index === 1 ? '已下架' : '不推荐'}\\` }))];
+  const assets = state.classified && state.moved ? [...classifiedAssets, ...unavailableFinal] : state.moved ? [movedAsset, ...libraryAssets] : libraryAssets;
   return (
     <Card className="overflow-hidden" padded={false}>
       <div className="flex h-12 items-center justify-between border-b border-line px-4">
-        <h3 className="text-base font-semibold text-ink">素材列表（共 2568 个素材）</h3>
+        <h3 className="text-base font-semibold text-ink">素材列表（{state.classified && state.moved ? '本次处理 10 个' : '共 2568 个素材'}）</h3>
       </div>
       <table className="w-full table-fixed border-collapse text-left text-sm">
         <thead className="bg-gray-50 text-gray-700">
@@ -287,6 +296,7 @@ function FilterToolbar() {
 }
 
 export function LocalLibraryPage() {
+  const { state } = useDemoState();
   return (
     <section>
       <PageHeader
@@ -298,6 +308,12 @@ export function LocalLibraryPage() {
           </Button>
         }
       />
+      {state.classified && state.moved ? (
+        <Card className="mb-5">
+          <h3 className="font-semibold text-ink">本次批量处理完成</h3>
+          <div className="mt-3 grid grid-cols-4 gap-4 text-sm"><p><b className="text-2xl">10</b><br />处理素材</p><p><b className="text-2xl">6</b><br />进入分类文件夹</p><p><b className="text-2xl">4</b><br />进入不可用文件夹</p><p><b className="text-2xl">3</b><br />重点素材</p></div>
+        </Card>
+      ) : null}
       <FilterToolbar />
       <div className="grid grid-cols-[220px_minmax(0,1fr)_252px] gap-3">
         <CategoryPanel />

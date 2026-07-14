@@ -6,7 +6,6 @@ import {
   Clock,
   Database,
   Download,
-  Info,
   Plus,
   Star,
   Users,
@@ -266,7 +265,7 @@ export function AdminPublishConfirmPage() {
   const navigate = useNavigate();
   const [showSuccess, setShowSuccess] = useState(false);
   const [publishing, setPublishing] = useState(false);
-  const { state, publishUpdate } = useDemoState();
+  const { state, publishUpdate, continueToEditor } = useDemoState();
 
   const handlePublish = () => {
     if (!state.m088MarkedExpired || publishing) return;
@@ -275,25 +274,33 @@ export function AdminPublishConfirmPage() {
       publishUpdate();
       setPublishing(false);
       setShowSuccess(true);
-      window.setTimeout(() => setShowSuccess(false), 3000);
+      if (!state.guideActive) window.setTimeout(() => setShowSuccess(false), 3000);
     }, 900);
   };
 
   return (
-    <section>
+    <section className="pb-24">
       {showSuccess ? (
-        <div className="fixed left-1/2 top-24 z-50 flex -translate-x-1/2 items-center gap-3 rounded-lg border border-emerald-200 bg-emerald-50 px-5 py-3 text-sm font-medium text-emerald-700 shadow-soft">
+        <div className="fixed left-1/2 top-[136px] z-[85] flex max-w-[calc(100vw-48px)] -translate-x-1/2 items-center gap-3 whitespace-nowrap rounded-lg border border-emerald-200 bg-emerald-50 px-5 py-3 text-sm font-medium text-emerald-700 shadow-lg">
           <CheckCircle2 className="h-5 w-5" />
           发布成功，更新已开始同步给所有剪辑师
+          {state.guideActive ? <button type="button" onClick={continueToEditor} className="ml-2 shrink-0 whitespace-nowrap rounded-md bg-emerald-700 px-3 py-1.5 text-white hover:bg-emerald-800">继续：切换到剪辑师模式 →</button> : null}
         </div>
       ) : null}
 
       <PageHeader title="发布更新确认" description="请确认本次更新内容，发布后将同步给所有剪辑师" />
 
+      {state.guideActive && state.guideStep === 2 ? (
+        <div data-guide-target="2" className="mb-4 scroll-mt-[128px] rounded-md border border-blue-200 bg-blue-50 px-4 py-3 ring-2 ring-brand ring-offset-2">
+          <p className="text-sm font-semibold text-ink">步骤2/5：确认并发布本次更新</p>
+          <p className="mt-1 text-sm text-gray-700">本次包含10个素材、4个不可用、3个重点、6个分类建议。</p>
+        </div>
+      ) : null}
+
       <Card className="mb-4 flex items-center justify-between border-amber-200 bg-amber-50">
         <div>
-          <p className="font-semibold text-ink">M088_7月促销口播.mp4 · 已过期</p>
-          <p className="mt-1 text-sm text-gray-700">原因：活动已结束 · 发布后等待剪辑师手动同步</p>
+          <p className="font-semibold text-ink">本次批量更新：10 个素材</p>
+          <p className="mt-1 text-sm text-gray-700">4 个不可用 · 3 个重点 · 6 个 AI 分类建议 · 发布后等待剪辑师手动同步</p>
         </div>
         <Badge tone="red" className="rounded-md">待发布</Badge>
       </Card>
@@ -312,22 +319,13 @@ export function AdminPublishConfirmPage() {
         </aside>
       </div>
 
-      <div className="mt-6 flex items-center justify-between border-t border-line pt-5">
-        <Button className="min-w-[194px]" size="lg" onClick={() => navigate('/admin/material-status')}>
-          上一步：选择更新内容
+      <div className="fixed bottom-0 left-[230px] right-0 z-[80] flex h-[76px] items-center justify-between border-t border-line bg-white px-8 shadow-[0_-4px_16px_rgba(0,0,0,0.08)]">
+        <Button className="min-w-[140px]" size="lg" onClick={() => navigate('/admin/material-status')}>
+          返回修改
         </Button>
-        <div className="flex items-center gap-4">
-          <Button className="min-w-[112px]" size="lg" onClick={() => navigate('/admin/material-status')}>
-            取消发布
-          </Button>
-          <Button className="min-w-[200px]" size="lg" variant="primary" onClick={handlePublish} disabled={!state.m088MarkedExpired || publishing || state.published}>
-            {publishing ? '发布中...' : state.published ? '已发布' : '确认发布更新'}
-          </Button>
-        </div>
-      </div>
-      <div className="mt-3 flex items-center justify-end gap-2 text-sm text-gray-700">
-        <Info className="h-4 w-4" />
-        <span>发布后将无法撤回，请确认信息无误</span>
+        <Button className={`min-w-[200px] ${state.guideActive && state.guideStep === 2 ? 'ring-2 ring-brand ring-offset-2' : ''}`} size="lg" variant="primary" onClick={handlePublish} disabled={!state.m088MarkedExpired || publishing || state.published}>
+          {publishing ? '发布中...' : state.published ? '已发布' : '确认发布更新'}
+        </Button>
       </div>
     </section>
   );

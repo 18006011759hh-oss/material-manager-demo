@@ -115,9 +115,9 @@ function AssetType({ type }: { type: AdminMaterialAsset['type'] }) {
   );
 }
 
-function AssetRow({ asset, onMarkExpired, isDemoAsset = false }: { asset: AdminMaterialAsset; onMarkExpired?: () => void; isDemoAsset?: boolean }) {
+function AssetRow({ asset, onMarkExpired, isDemoAsset = false, highlighted = false }: { asset: AdminMaterialAsset; onMarkExpired?: () => void; isDemoAsset?: boolean; highlighted?: boolean }) {
   return (
-    <tr className="border-b border-line last:border-b-0">
+    <tr className={cn('border-b border-line last:border-b-0 transition', highlighted && 'relative bg-blue-50 ring-2 ring-inset ring-brand')}>
       <td className="px-4 py-3">
         <input type="checkbox" className="h-4 w-4 rounded border-line" aria-label={`选择 ${asset.name}`} />
       </td>
@@ -156,7 +156,7 @@ function AssetRow({ asset, onMarkExpired, isDemoAsset = false }: { asset: AdminM
       <td className="whitespace-pre-line px-4 py-3 text-sm leading-6 text-ink">{asset.createdAt}</td>
       <td className="px-4 py-3">
         {isDemoAsset && onMarkExpired ? (
-          <Button className="whitespace-nowrap" size="sm" onClick={onMarkExpired} disabled={asset.status === 'expired'}>{asset.status === 'expired' ? '已标记' : '标记过期'}</Button>
+          <Button className={cn('whitespace-nowrap', highlighted && 'ring-2 ring-brand ring-offset-2')} size="sm" onClick={onMarkExpired} disabled={asset.status === 'expired'}>{asset.status === 'expired' ? '已标记' : '标记过期'}</Button>
         ) : <IconButton icon={<MoreHorizontal className="h-4 w-4" />} label="更多操作" className="h-8 w-8 border border-line" />}
       </td>
     </tr>
@@ -192,7 +192,7 @@ function MaterialsTable() {
           </tr>
         </thead>
         <tbody>
-          <AssetRow asset={demoAsset} isDemoAsset onMarkExpired={markM088Expired} />
+          <AssetRow asset={demoAsset} isDemoAsset onMarkExpired={markM088Expired} highlighted={state.guideActive && state.guideStep === 1} />
           {adminMaterialAssets.map((asset) => (
             <AssetRow key={asset.id} asset={asset} />
           ))}
@@ -332,6 +332,35 @@ function PendingChanges() {
   );
 }
 
+const batchDemoAssets = [
+  ['M088', '7月促销口播', '已过期'], ['M056', '旧款粉底测评', '已过期'], ['M039', '旧包装展示', '已下架'], ['M061', '赠品展示', '不推荐'],
+  ['N001', '夏日促销口播', 'AI建议'], ['N002', '新品功能展示', 'AI建议·重点'], ['N003', '零食测评', 'AI建议'], ['N004', '节日氛围', 'AI建议·重点'], ['N005', '产品教程', 'AI建议'], ['N006', '搞笑片段', 'AI建议·重点'],
+];
+
+function BatchDemoPanel() {
+  const { state, setBatchUnavailable, setBatchImportant, continueToPublish } = useDemoState();
+  const ready = state.batchUnavailableSet && state.batchImportantSet;
+  return (
+    <Card data-guide-target="1" className={`mb-5 scroll-mt-[128px] ${state.guideActive && state.guideStep === 1 ? 'ring-2 ring-brand ring-offset-2' : ''}`}>
+      <div className="flex items-start justify-between gap-5">
+        <div>
+          <h3 className="text-base font-semibold text-ink">本次批量处理 · 10 个素材</h3>
+          <p className="mt-1 text-sm text-gray-600">4 个不可用 · 6 个 AI 分类建议 · 3 个重点素材</p>
+        </div>
+        <div className="flex gap-2">
+          <Button onClick={setBatchUnavailable} disabled={state.batchUnavailableSet}>{state.batchUnavailableSet ? '✓ 已设置 4 个不可用' : '批量设置 4 个不可用'}</Button>
+          <Button onClick={setBatchImportant} disabled={state.batchImportantSet}>{state.batchImportantSet ? '✓ 已标记 3 个重点' : '批量标记 3 个重点'}</Button>
+          <Button variant="primary" disabled={!ready} onClick={continueToPublish}>下一步：确认并发布</Button>
+        </div>
+      </div>
+      <div className="mt-4 grid grid-cols-5 gap-2">
+        {batchDemoAssets.map(([id, name, status], index) => <label key={id} className="flex min-w-0 items-center gap-2 rounded-md border border-line bg-gray-50 px-3 py-2 text-xs"><input type="checkbox" defaultChecked /><span className="min-w-0"><b>{id}</b> {name}<small className={`mt-1 block ${index < 4 ? 'text-amber-700' : 'text-brand'}`}>{status}</small></span></label>)}
+      </div>
+      <p className="mt-3 text-xs text-gray-600">6 个可用素材均已生成 AI 标签、建议分类和建议路径，发布后由剪辑师人工确认。</p>
+    </Card>
+  );
+}
+
 export function AdminMaterialStatusPage() {
   const navigate = useNavigate();
   const { state } = useDemoState();
@@ -352,6 +381,8 @@ export function AdminMaterialStatusPage() {
           </Button>
         }
       />
+
+      {state.guideActive ? <BatchDemoPanel /> : null}
 
       <div className="grid grid-cols-[minmax(0,1fr)_244px] gap-8">
         <div className="min-w-0">

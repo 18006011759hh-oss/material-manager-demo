@@ -26,6 +26,7 @@ import {
   previewFiles,
   type DownloadAsset,
 } from '../data/mockDownloadAiClassify';
+import { useDemoState } from '../context/DemoStateContext';
 
 function Stepper() {
   return (
@@ -319,10 +320,11 @@ function LocalPreview() {
 export function DownloadAiClassifyPage() {
   const navigate = useNavigate();
   const [organized, setOrganized] = useState(false);
+  const { state, confirmAiClassification } = useDemoState();
 
   const handleOrganize = () => {
-    if (!window.confirm('确认按 AI 分类建议整理素材并移动到对应本地文件夹吗？')) return;
     setOrganized(true);
+    confirmAiClassification();
   };
 
   return (
@@ -331,6 +333,8 @@ export function DownloadAiClassifyPage() {
         title="下载与 AI 分类"
         description="下载完成后生成AI分类建议，剪辑师确认整理后，文件才会移动到对应本地文件夹。"
       />
+
+      {state.guideActive && state.guideStep === 5 ? <div className="mb-4 rounded-md border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-ink">已全选 6 个素材。AI 只提供标签、分类和路径建议；请人工确认或修改后再批量整理，系统不会自动移动或删除文件。</div> : null}
 
       <Stepper />
 
@@ -348,8 +352,8 @@ export function DownloadAiClassifyPage() {
         <Button className="min-w-[172px]" size="lg">
           暂不整理，稍后处理
         </Button>
-        <Button onClick={handleOrganize} className="min-w-[278px]" size="lg" variant="primary" icon={<RefreshCw className="h-5 w-5" />}>
-          {organized ? '已完成整理' : '确认整理（移动到本地文件夹）'}
+        <Button data-guide-target="5" onClick={handleOrganize} className={`min-w-[278px] scroll-mt-[128px] ${state.guideActive && state.guideStep === 5 ? 'ring-2 ring-brand ring-offset-2' : ''}`} size="lg" variant="primary" icon={<RefreshCw className="h-5 w-5" />}>
+          {organized || state.classified ? '6 个素材已完成整理' : '确认并批量处理6个素材'}
         </Button>
       </div>
       <div className="mt-3 flex items-center justify-end gap-2 text-sm text-gray-700">

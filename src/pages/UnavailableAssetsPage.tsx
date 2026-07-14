@@ -92,10 +92,10 @@ function SuggestionCell({ suggestion }: { suggestion: string }) {
   );
 }
 
-function AssetActions({ assetId, handled, onMove }: { assetId: string; handled: boolean; onMove: (assetId: string) => void }) {
+function AssetActions({ assetId, handled, onMove, highlighted }: { assetId: string; handled: boolean; onMove: (assetId: string) => void; highlighted?: boolean }) {
   return (
     <div className="flex items-center gap-2 whitespace-nowrap">
-      <Button className="whitespace-nowrap" size="sm" disabled={handled} onClick={() => onMove(assetId)}>{handled ? '已处理' : '移动'}</Button>
+      <Button className={`whitespace-nowrap ${highlighted ? 'animate-pulse ring-2 ring-brand ring-offset-2' : ''}`} size="sm" disabled={handled} onClick={() => onMove(assetId)}>{handled ? '已处理' : '移动'}</Button>
       <Button className="whitespace-nowrap" size="sm">暂不处理</Button>
       <IconButton icon={<MoreHorizontal className="h-4 w-4" />} label="更多操作" className="h-8 w-8" />
     </div>
@@ -104,13 +104,14 @@ function AssetActions({ assetId, handled, onMove }: { assetId: string; handled: 
 
 export function UnavailableAssetsPage() {
   const [message, setMessage] = useState('');
+  const [allSelected, setAllSelected] = useState(true);
   const { state, moveM088 } = useDemoState();
-  const visibleAssets = state.synced ? unavailableAssets.filter((asset) => asset.id === 'M088').map((asset) => ({ ...asset, reason: '活动已结束' })) : [];
+  const visibleAssets = state.synced ? unavailableAssets.slice(0, 4).map((asset) => asset.id === 'M088' ? ({ ...asset, reason: '活动已结束' }) : asset) : [];
   const tabs = [
     { label: `全部（${visibleAssets.length}）`, value: 'all' },
-    { label: `已过期（${visibleAssets.length}）`, value: 'expired' },
-    { label: '已下架（0）', value: 'offline' },
-    { label: '不推荐使用（0）', value: 'notRecommended' },
+    { label: `已过期（${state.synced ? 2 : 0}）`, value: 'expired' },
+    { label: `已下架（${state.synced ? 1 : 0}）`, value: 'offline' },
+    { label: `不推荐使用（${state.synced ? 1 : 0}）`, value: 'notRecommended' },
   ];
 
   const handleMove = (assetId: string) => {
@@ -118,6 +119,12 @@ export function UnavailableAssetsPage() {
     if (assetId === 'M088') moveM088();
     setMessage('处理成功，素材已移动到“不可用素材”文件夹');
     window.setTimeout(() => setMessage(''), 3000);
+  };
+
+  const handleBatchMove = () => {
+    if (!window.confirm('确认将选中的 4 个素材批量移动到对应的不可用文件夹吗？此操作不会永久删除文件，可随时恢复。')) return;
+    moveM088();
+    setMessage('批量处理成功：4 个素材已移动到不可用素材文件夹');
   };
 
   return (
@@ -130,7 +137,7 @@ export function UnavailableAssetsPage() {
       <div className="grid grid-cols-[minmax(0,1fr)_398px] gap-11">
         <div className="grid grid-cols-3 gap-7">
           {summaryStats.map((stat) => (
-            <SummaryStatCard key={stat.label} {...stat} value={stat.label === '已过期' ? String(visibleAssets.length) : '0'} />
+            <SummaryStatCard key={stat.label} {...stat} value={!state.synced ? '0' : stat.label === '已过期' ? '2' : '1'} />
           ))}
         </div>
 
@@ -153,11 +160,12 @@ export function UnavailableAssetsPage() {
       <div className="flex h-[66px] items-center justify-between gap-4 border-b border-line">
         <div className="flex items-center gap-5 text-sm text-gray-700">
           <label className="inline-flex items-center gap-3">
-            <input type="checkbox" className="h-4 w-4 rounded border-line" />
+            <input type="checkbox" checked={allSelected} onChange={(event) => setAllSelected(event.target.checked)} className="h-4 w-4 rounded border-line" />
             <span>全选</span>
           </label>
           <span className="h-5 w-px bg-line" />
-          <span>已选择 0 个素材</span>
+          <span>已选择 {allSelected ? visibleAssets.length : 0} 个素材</span>
+          <Button data-guide-target="4" className={`scroll-mt-[128px] ${state.guideActive && state.guideStep === 4 ? 'ring-2 ring-brand ring-offset-2' : ''}`} variant="primary" disabled={!allSelected || !visibleAssets.length || state.moved} onClick={handleBatchMove}>{state.moved ? '批量处理成功' : '批量移动到不可用文件夹'}</Button>
         </div>
 
         <div className="flex items-center gap-3">
@@ -192,7 +200,7 @@ export function UnavailableAssetsPage() {
           </thead>
           <tbody>
             {visibleAssets.map((asset) => (
-              <tr key={asset.id} className="border-b border-line last:border-b-0">
+              <tr key={asset.id} className={`border-b border-line last:border-b-0 ${state.guideActive && state.guideStep === 4 ? 'bg-blue-50 ring-2 ring-inset ring-brand' : ''}`}>
                 <td className="px-5 py-4">
                   <AssetInfo asset={asset} />
                 </td>
@@ -212,7 +220,7 @@ export function UnavailableAssetsPage() {
                   <SuggestionCell suggestion={asset.suggestion} />
                 </td>
                 <td className="px-5 py-4">
-                  <AssetActions assetId={asset.id} handled={state.moved} onMove={handleMove} />
+                  <AssetActions assetId={asset.id} handled={state.moved} onMove={handleMove} highlighted={state.guideActive && state.guideStep === 4} />
                 </td>
               </tr>
             ))}

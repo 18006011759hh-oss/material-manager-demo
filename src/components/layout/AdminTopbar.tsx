@@ -1,10 +1,12 @@
 import { Bell, ChevronDown, CircleHelp, UserRound } from 'lucide-react';
 import { IconButton } from '../common/IconButton';
 import { DemoControls } from './DemoControls';
+import { useDemoState } from '../../context/DemoStateContext';
 
 export function AdminTopbar() {
+  const { state } = useDemoState();
   return (
-    <header className="flex h-[78px] items-center justify-between gap-4 border-b border-line bg-white px-6">
+    <header className={`sticky z-[70] flex h-[78px] items-center justify-between gap-4 border-b border-line bg-white px-6 ${state.guideActive ? 'top-[44px]' : 'top-0'}`}>
       <DemoControls />
       <div className="flex shrink-0 items-center gap-4">
         <IconButton icon={<Bell className="h-5 w-5" />} label="通知" badge={3} />

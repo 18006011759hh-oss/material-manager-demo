@@ -18,7 +18,11 @@ import { AlertTriangle } from 'lucide-react';
 
 export function EditorHomePage() {
   const { state } = useDemoState();
-  const demoStats = stats.map((stat) => stat.label === '不可用素材' ? { ...stat, value: state.synced ? '1' : '0', trend: state.synced ? '刚刚同步' : '暂无待处理' } : stat);
+  const demoStats = stats.map((stat) => {
+    if (!state.synced) return ['今日新增素材', '重点素材', '不可用素材', '待分类素材'].includes(stat.label) ? { ...stat, value: '0', trend: '等待同步' } : stat;
+    const values: Record<string, string> = { 今日新增素材: '10', 重点素材: '3', 不可用素材: '4', 待分类素材: '6' };
+    return values[stat.label] ? { ...stat, value: values[stat.label], trend: '刚刚同步' } : stat;
+  });
   return (
     <div className="grid grid-cols-[minmax(0,1fr)_318px] gap-6">
       <section className="min-w-0">
@@ -34,7 +38,7 @@ export function EditorHomePage() {
         {state.published && !state.synced ? (
           <div className="mb-5 flex items-center gap-3 rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
             <AlertTriangle className="h-5 w-5" />
-            <span className="font-medium">1 条素材状态更新</span>
+            <span className="font-medium">10 条素材更新待同步</span>
             <span>请点击顶部“同步更新”获取最新状态</span>
           </div>
         ) : null}

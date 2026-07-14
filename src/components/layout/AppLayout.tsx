@@ -5,6 +5,7 @@ import { AdminTopbar } from './AdminTopbar';
 import { FooterStatusBar } from './FooterStatusBar';
 import { Sidebar } from './Sidebar';
 import { Topbar } from './Topbar';
+import { GuidedDemo } from './GuidedDemo';
 
 interface AppLayoutProps {
   children: ReactNode;
@@ -16,6 +17,7 @@ export function AppLayout({ children }: AppLayoutProps) {
 
   return (
     <div className="min-h-screen min-w-[1280px] bg-canvas">
+      <GuidedDemo />
       <div className="mx-auto flex min-h-screen w-full max-w-[1536px] border-x border-line bg-canvas">
         {isAdmin ? <AdminSidebar /> : <Sidebar />}
         <div className="flex min-w-0 flex-1 flex-col">
